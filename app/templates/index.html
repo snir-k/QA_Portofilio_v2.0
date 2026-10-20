@@ -1,0 +1,190 @@
+<!-- app/templates/index.html -->
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>דאשבורד אוטומציה מורחב - בלש השכבות</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=1.0.4">
+</head>
+<body>
+    <div class="dashboard-wrapper">
+        <header>
+            <h1>{{ cms.welcome_text }}</h1>
+            <p>סטטוס שרת: <span class="server-status-active">{{ status }}</span></p>
+        </header>
+
+       <!--  Carousel: קרוסלת ניווט בשליטת המשתמש (ללא לולאה סחרחרה) -->
+        <section class="carousel-root-wrapper">
+            <button id="prevTechBtn" class="carousel-nav-btn nav-btn-right" aria-label="הקודם">❯</button>
+            <section class="carousel-container">
+                <div id="carouselTrack" class="carousel-track-manual">
+                {% for tech in technologies %}
+                <div class="carousel-item" data-color="{{ tech.color }}">
+                    <!-- תגית נקייה לחלוטין מאזהרות ללא קוד JS פנימי -->
+                    <img src="{{ tech.icon_path }}" alt="" class="tech-uploaded-img">
+                    <span class="tech-name">{{ tech.name }}</span>
+                </div>
+                {% endfor %}
+            </div>
+            </section>
+            <button id="nextTechBtn" class="carousel-nav-btn nav-btn-left" aria-label="הבא">❮</button>
+        </section>
+
+
+        <!-- 📊 אזור הגרפים -->
+        <section class="charts-wrapper">
+            <div class="chart-container">
+                <h3>התפלגות סטטוס בדיקות (גרף עוגה)</h3>
+                <canvas id="statusPieChart"></canvas>
+            </div>
+            <div class="chart-container">
+                <h3>זמן ריצה לפי בדיקה (גרף עמודות)</h3>
+                <canvas id="durationBarChart"></canvas>
+            </div>
+        </section>
+
+        <!-- 🛠️ כפתורי הפעולה היוקרתיים -->
+        <section class="actions-bar">
+            <button id="runSimulationBtn" class="btn btn-primary">הרצת סימולציה דינמית 🔄</button>
+            <button id="exportExcelBtn" class="btn btn-success">ייצוא ל-Excel (RTL) 📊</button>
+            <button id="exportPdfBtn" class="btn btn-danger">הפקת דוח PDF רוחבי 📄</button>
+            <button id="snapshotBtn" class="btn btn-warning">צילום מסך Snapshot 📸</button>
+        </section>
+
+                <!-- 🔍 מערכת חיפוש חכמה -->
+        <section class="search-filter-bar">
+            <div class="search-group">
+                <label for="searchCategory" class="visually-hidden">קטגוריית חיפוש:</label>
+                <select id="searchCategory" class="search-select">
+                    <option value="id">מזהה בדיקה (ID)</option>
+                    <option value="name" selected>שם הבדיקה</option>
+                    <option value="type">סוג (UI/API)</option>
+                    <option value="severity">חומרה (Severity)</option>
+                    <option value="status">סטטוס (Status)</option>
+                </select>
+                <label for="searchInput" class="visually-hidden">מונח לחיפוש:</label>
+                <input type="text" id="searchInput" class="search-input" placeholder="הקלד מונח לחיפוש דינמי...">
+            </div>
+        </section>
+
+
+        <!-- 📅 טבלת הנתונים הדינמית -->
+        <section class="table-container">
+            <table id="testTable">
+                <thead>
+                    <tr>
+                        <th>מזהה (ID)</th>
+                        <th>שם הבדיקה</th>
+                        <th>סוג</th>
+                        <th>חומרה</th>
+                        <th>סטטוס</th>
+                        <th>זמן (שניות)</th>
+                        <th>כיסוי (%)</th>
+                        <th>יציבות (%)</th>
+                    </tr>
+                </thead>
+                <tbody id="testTableBody">
+                    {% for test in tests %}
+                    <tr class="test-row status-{{ test.status.lower() }}" data-id="{{ test.id }}">
+                        <td><strong>{{ test.id }}</strong></td>
+                        <td>{{ test.name }}</td>
+                        <td><span class="badge badge-type">{{ test.type }}</span></td>
+                        <td><span class="badge badge-severity">{{ test.severity }}</span></td>
+                        <td><span class="status-indicator">{{ test.status }}</span></td>
+                        <td>{{ test.execution_time }}s</td>
+                        <td>{{ test.coverage }}%</td>
+                        <td>{{ test.stability }}%</td>
+                    </tr>
+                    {% if test.status == 'Failed' and test.log %}
+                    <tr class="log-row" data-for="{{ test.id }}">
+                        <td colspan="8">
+                            <div class="log-trace-box"><strong>Stack Trace Log:</strong><pre>{{ test.log }}</pre></div>
+                        </td>
+                    </tr>
+                    {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+
+                <!-- 🔒 לוח ניהול מאובטח בשליטה בלעדית של הלקוח לנעילה אוטומטית -->
+        <footer class="admin-footer">
+            <!-- כפתור Toggle אחיד ויזואלי -->
+            <button id="adminToggleBtn" class="btn btn-dark">מצב מנהל: OFF 🔴 (לחץ להתחברות)</button>
+
+            <div id="cmsPanel" class="cms-panel" style="display: none;">
+                <h2>לוח מנהל אתר - ניהול תוכן וטכנולוגיות (מחובר זמנית)</h2>
+                <div class="cms-sections-grid">
+                    <form action="/admin/update-content" method="POST" class="cms-form">
+                        <div class="form-group">
+                            <label for="welcomeText">ערוך טקסט ברוך הבא:</label>
+                            <input type="text" id="welcomeText" name="welcome_text" value="{{ cms.welcome_text }}" class="cms-input">
+                        </div>
+                        <button type="submit" class="btn btn-success">שמור טקסט 💾</button>
+                    </form>
+
+                    <form action="/admin/add-tech" method="POST" enctype="multipart/form-data" class="cms-form">
+                        <div class="form-group">
+                            <label for="techNameAdd">שם טכנולוגיה:</label>
+                            <input type="text" id="techNameAdd" name="tech_name" placeholder="למשל: Postman..." class="cms-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="techIconFile">טען אייקון מהמחשב (מומלץ PNG/SVG 256px):</label>
+                            <input type="file" id="techIconFile" name="tech_icon" accept="image/*" class="cms-input" style="padding: 7px;">
+                        </div>
+                        <div class="form-group">
+                            <label for="techColorAdd">בחר צבע מונגש:</label>
+                            <select id="techColorAdd" name="tech_color" class="cms-input" style="background:#3d3d5c; color:white;">
+                                <option value="#21D4FD">PyCharm כחול זוהר</option>
+                                <option value="#4B8BBE">Python כחול קלאסי</option>
+                                <option value="#FF6C37">Postman כתום אש</option>
+                                <option value="#32CD32">Selenium ירוק מותג</option>
+                                <option value="#FFFFFF">לבן ניגודיות מוחלטת</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">הוסף לקרוסלה ➕</button>
+                    </form>
+
+                    <form action="/admin/delete-tech" method="POST" class="cms-form">
+                        <div class="form-group">
+                            <label for="techNameDelete">מחק טכנולוגיה קיימת:</label>
+                            <select id="techNameDelete" name="tech_name" class="cms-input" style="background:#3d3d5c; color:white;">
+                                {% for tech in technologies %}
+                                <option value="{{ tech.name }}">{{ tech.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-danger">הסר מהקרוסלה ❌</button>
+                    </form>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- מודאל אבטחה מהיר -->
+    <div id="adminModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <h3>אימות מנהל מערכת</h3>
+            <p>אנא הזן סיסמת ניהול:</p>
+            <div class="password-wrapper">
+                <label for="adminPassword" class="visually-hidden">סיסמת מנהל:</label>
+                <input type="password" id="adminPassword" placeholder="הזן סיסמה..." maxlength="20" required>
+                <button type="button" id="togglePasswordBtn" class="password-toggle-icon">👁️</button>
+            </div>
+            <div id="authErrorMessage" class="auth-error" style="display: none;">סיסמה שגויה! נסה שוב.</div>
+            <div class="modal-actions">
+                <button id="submitAuthBtn" class="btn btn-primary">אימות כניסה</button>
+                <button id="closeAuthBtn" class="btn btn-danger">ביטול</button>
+            </div>
+        </div>
+    </div>
+
+    <script defer src="/static/js/chart.min.js"></script>
+    <script defer src="/static/js/xlsx.full.min.js"></script>
+    <script defer src="/static/js/html2canvas.min.js"></script>
+    <script defer src="/static/js/html2pdf.bundle.min.js"></script>
+    <script defer src="/static/js/main.js?v=1.0.5"></script>
+
+</body>
+</html>

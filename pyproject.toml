@@ -1,0 +1,38 @@
+[project]
+name = "portfolio-automation-project"
+version = "1.0.0"
+description = "דאשבורד אנליטי מבוסס פייתון ותשתית אוטומציה מורחבת - בלש השכבות"
+authors = [
+    { name = "Snir" }
+]
+
+dependencies = [
+    "Flask>=3.0.3",
+    "Jinja2>=3.1.4",
+    "requests>=2.32.3",
+    "pytest>=8.0.0",
+    "pytest-html>=4.1.1",
+    "werkzeug>=3.0.3",
+    "selenium>=4.20.0",  # הוספת ספריית סלניום הרשמית להרצת בדיקות הדפדפן
+    "pytest-html"
+]
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+addopts = "-v --html=reports/automation_report.html --self-contained-html"
+testpaths = [
+    "tests"
+]
+
+markers = [
+    "api: RESTful Web API endpoint network suite validation path",
+    "ui: Selenium WebDriver E2E browser automation functional path",
+    "unit: Isolated business logic layer service unit mock tokens",
+    "repository: Database layer SQL constraint infrastructure suite",
+    "service: Core business logic guard clause validation suite",
+    "positive: Happy path execution routing tracking",
+    "negative: Boundary condition and payload hardening validation",
+    "navigation: E2E browser tab and window trace scripts",
+    "edge: Boundary edge cases and numeric exception handling pathways",
+    "xray: Custom marker to map Pytest methods directly to Jira Issue Keys"
+    ]

@@ -1,0 +1,37 @@
+{
+  "cms_settings": {
+    "welcome_text": "שלום!  כאן רואים דאשבורד ניהול ואוטומציה (Full-Stack Python) 🚀"
+  },
+  "technologies": [
+    {
+      "name": "Python",
+      "icon_path": "/static/assets/python-icon.png",
+      "color": "#4B8BBE"
+    },
+    {
+      "name": "Selenium",
+      "icon_path": "/static/assets/selenium-icon.png",
+      "color": "#32CD32"
+    },
+    {
+      "name": "Flask",
+      "icon_path": "/static/assets/flask-icon.png",
+      "color": "#FFD700"
+    },
+    {
+      "name": "PyCharm",
+      "icon_path": "/static/assets/pycharm-icon.png",
+      "color": "#21D4FD"
+    },
+    {
+      "name": "Postman",
+      "icon_path": "/static/assets/postman-icon.png",
+      "color": "#FF6C37"
+    },
+    {
+      "name": "GitHub",
+      "icon_path": "/static/assets/github-icon.png",
+      "color": "#FFFFFF"
+    }
+  ]
+}

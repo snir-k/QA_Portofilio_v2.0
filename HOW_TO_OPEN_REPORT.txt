@@ -1,0 +1,47 @@
+=============================================================================
+         DIRECTIONS MATRIX: HOW TO VIEW THE AUTOMATED REPORT DASHBOARD
+=============================================================================
+
+Dear Evaluator,
+
+To visually examine, sort, and deep-dive into the rich results of the 15 
+automated integration, unit, UI, and API tests executed for this system framework, 
+a fully self-contained, premium interactive HTML report dashboard has been compiled.
+
+Please execute the following simple operational steps to access the file:
+
+STEP 1: Locate the Compiled Output Asset
+-----------------------------------------
+Open the root directory of your project folder submission and navigate to the 
+following subdirectory:
+--> reports/
+Inside this target directory, locate the master dashboard report file:
+--> complete_automation_report.html
+
+STEP 2: Open using any Contemporary Web Browser
+------------------------------------------------
+Right-click on 'complete_automation_report.html', select "Open With", and 
+choose your preferred production web browser environment:
+* Google Chrome
+* Microsoft Edge
+* Mozilla Firefox
+* Apple Safari
+
+STEP 3: Navigate and Audit the 15/15 Passed Test Matrix
+--------------------------------------------------------
+As soon as the interactive interface expands in your browser view, you will 
+be presented with:
+1. Summary Matrix Table: Displays certified repository metadata metrics 
+   including student credentials (Snir Kanias), total execution intervals, 
+   active configurations, and a green 100% stability pass rate token.
+2. Status Filter Toggles: Seamlessly narrow down test scopes. Click the 
+   'Passed' button to inspect success rows, or filter by custom marker tags.
+3. Expanded Execution Trace Logs: Click on any specific test script row (e.g., 
+   CSS validation, explicit wait gates, or Requests API responses) to 
+   instantly expand the runtime parameters, input fixtures, and step logs.
+
+*Note: Ensure the local application server is active at http://127.0.0.1:5000 
+when running the live terminal suite scripts.
+
+Thank you for your valuable time, dedication, and framework consideration!
+=============================================================================
